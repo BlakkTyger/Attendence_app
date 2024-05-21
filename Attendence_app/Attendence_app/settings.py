@@ -126,8 +126,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 import os
 #added
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static")
+    os.path.join(BASE_DIR, "static"),
+    '/var/www/static/',
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 
 LOGIN_REDIRECT_URL = "attendence:profile"
 LOGOUT_REDIRECT_URL = "attendence:login"
