@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import authenticate, login, logout 
 from django.contrib.auth.forms import UserCreationForm
@@ -8,16 +8,14 @@ from django.contrib import messages
 from django.utils import timezone
 from django.core.files.base import ContentFile
 import time
+import datetime
 from django.views.decorators.csrf import csrf_exempt
 
 import numpy as np
-import json
 import base64
 from io import BytesIO
 from PIL import Image
 import face_recognition
-import io
-import cv2
 
 from pathlib import Path
 import os
@@ -25,8 +23,6 @@ import os
 
 from .models import *
 from .decorators import unauth_user, allowed_users
-
-variable_to_store = None
 
 def log_in(request):
     #if request.user.is_authenticated:
@@ -81,7 +77,10 @@ def profile(request):
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['student'])
 def video(request):
-    return render(request, 'video.html')
+    if request.method == 'POST':
+        course = request.POST.get('course')
+        request.session['course'] = course
+        return render(request, 'video.html', {'course': course})
 
 
 @login_required(login_url='login')
@@ -91,7 +90,6 @@ def select_course(request):
     ongoing_sessions = ClassSession.objects.filter(date__lte=now, date__gt=now - timezone.timedelta(hours=1))
     context = {"sesh": ongoing_sessions}
     return render(request, 'select-course.html', context)
-
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['student'])
@@ -114,7 +112,6 @@ def check_attendance(request):
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['student'])
 def recognition(request):
-    global variable_to_store
     pic_name = request.user.student.profile_pic.url.split('/')[-1]
     BASE_DIR = Path(__file__).resolve().parent.parent
     dir_path = os.path.join(BASE_DIR, "static")
@@ -163,6 +160,27 @@ def recognition(request):
     return JsonResponse({'status': 'fail'})
     #return JsonResponse({'message': 'Invalid request.'})
 
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['student'])
 def marked(request):
-    context = {}
+    student = request.user.student
+    session = request.session.get('course')
+    context = {"sesh":session}
+    course_code = session.split(' - ')[0]
+    print(course_code)
+    format = "%Y-%m-%d %H:%M:%S"
+    dt = session.split(' - ')[1]
+    datetime_str = datetime.datetime.strptime(dt, format) 
+    print(datetime_str)
+    course = get_object_or_404(Course, code = course_code)
+    enroll = get_object_or_404(Enrollment, student = student, course = course)
+    sesh = get_object_or_404(ClassSession, course = course, date = datetime_str)
+
+    Attendance.objects.create(enrollment = enroll, session = sesh, attended = True)
+    
+
+
+
+    
     return render(request, 'marked.html',context)

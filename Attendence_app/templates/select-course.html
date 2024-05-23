@@ -5,46 +5,43 @@
 {% endblock %}
 
 {% block content %}
-
-<style>
-
-    .heading{
-        font-size: 10vh;
-        color:white;
-        padding-top: 20vh;
+  <style>
+    .heading {
+      font-size: 10vh;
+      color: white;
+      padding-top: 20vh;
     }
-
-    .main{
-        color:white;
+    
+    .main {
+      color: white;
     }
-
-    .point{
-
+    
+    .point {
     }
-
-    .button{
-        background-color: orange;
-        padding: 2vh;
-        border-radius: 5vh;
-        border: solid white;
+    
+    .button {
+      background-color: orange;
+      padding: 2vh;
+      border-radius: 5vh;
+      border: solid white;
+      cursor: pointer;
     }
+  </style>
 
-</style>
-
-
-<body>
-
-<div class = 'heading'>Ongoing Classes</div>
-
-<ul class = "main">
-    {% for course in sesh %}
-        <li class = "point">{{ course.course.name }}</li>
-        <a href = "/video" class = 'button'>Mark Attendance</a>
-    {% empty %}
-        <li class = "point">No courses enrolled.</li>
-    {% endfor %}
-</ul>
-
-</body>
-
+  <body>
+    <div class="heading">Ongoing Classes</div>
+    <form action="{% url 'video' %}" method="post">
+      {% csrf_token %}
+      <ul class="main">
+        {% for course in sesh %}
+          <li class="point">
+            {{ course.course.name }}
+            <button class="button" type="submit" name="course" value="{{ course }}">Mark Attendance</button>
+          </li>
+        {% empty %}
+          <li class="point">No courses enrolled.</li>
+        {% endfor %}
+      </ul>
+    </form>
+  </body>
 {% endblock %}
