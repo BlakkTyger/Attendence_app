@@ -19,7 +19,7 @@
     }
     
     .user_card {
-      width: 27vw;
+      width: 350px;
       margin-top: 25vh;
       margin-bottom: 3vh;
       background: #1e2534;
@@ -71,11 +71,18 @@
       outline: 0px !important;
     }
     
-    #messages {
-      background-color: grey;
-      color: #fff;
-      padding: 10px;
-      margin-top: 10px;
+    .messages {
+      color: red;
+      font:Raleway;
+      padding: 1vh;
+      margin-top: 2vh;
+      align-items: center;
+    }
+
+    @media only screen and (max-width: 500px){
+      .user_card{
+        width: 80vw;
+      }
     }
   </style>
   <body>
@@ -101,7 +108,13 @@
                   <span class="input-group-text"><i class="fas fa-key"></i></span>
                 </div>
                 <input type="password" name="password" placeholder="Password..." class="form-control" />
+
+                {% for message in messages %}
+                <p class = 'messages'>{{message}}</p>
+              {%endfor%}
               </div>
+
+              
 
               <div class="d-flex justify-content-center mt-3 login_container">
                 <input class="btn login_btn" type="submit" value="Login" />
