@@ -48,7 +48,7 @@ def log_in(request):
 # logout page
 def user_logout(request):
     logout(request)
-    return redirect('log_in')
+    return redirect('login')
 
 '''@login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -80,26 +80,22 @@ def profile(request):
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['student'])
-def mark_att(request):
-    return render(request, 'mark-att.html')
+def video(request):
+    return render(request, 'video.html')
+
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['student'])
-def mark(request):
+def select_course(request):
     now = timezone.now()
     ongoing_sessions = ClassSession.objects.filter(date__lte=now, date__gt=now - timezone.timedelta(hours=1))
     context = {"sesh": ongoing_sessions}
-    return render(request, 'mark.html', context)
-
-@login_required(login_url='login')
-@allowed_users(allowed_roles=['student'])
-def mark_att(request):
-    return render(request, 'mark-att.html')
+    return render(request, 'select-course.html', context)
 
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['student'])
-def check_att(request):
+def check_attendance(request):
     student = request.user.student
     enrollments = Enrollment.objects.filter(student=student)
     attendance_records = Attendance.objects.filter(enrollment__in=enrollments)
@@ -111,15 +107,13 @@ def check_att(request):
         cnt+=1
 
     context = {'info': c}
-    return render(request, 'check-att.html',context)
-
-
+    return render(request, 'check-attendence.html',context)
 
 
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['student'])
-def att_marked(request):
+def recognition(request):
     global variable_to_store
     pic_name = request.user.student.profile_pic.url.split('/')[-1]
     BASE_DIR = Path(__file__).resolve().parent.parent
@@ -155,7 +149,7 @@ def att_marked(request):
             if match[0]:
                 should_stop = True
                 print("CHeckpoint 5")
-                return JsonResponse({'status': 'success', 'should_stop': should_stop, 'redirect_url': '/att-marked-final/'})
+                return JsonResponse({'status': 'success', 'should_stop': should_stop, 'redirect_url': '/marked/'})
             else:
                 print("CHeckpoint 6")
                 #return JsonResponse({'message': 'Face not recognized.'})
@@ -169,6 +163,6 @@ def att_marked(request):
     return JsonResponse({'status': 'fail'})
     #return JsonResponse({'message': 'Invalid request.'})
 
-def att_marked_final(request):
+def marked(request):
     context = {}
-    return render(request, 'att-marked.html',context)
+    return render(request, 'marked.html',context)

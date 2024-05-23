@@ -39,7 +39,7 @@
 <ul class = "main">
     {% for course in sesh %}
         <li class = "point">{{ course.course.name }}</li>
-        <a href = "/mark-attendence" class = 'button'>Mark Attendence</a>
+        <a href = "/video" class = 'button'>Mark Attendance</a>
     {% empty %}
         <li class = "point">No courses enrolled.</li>
     {% endfor %}

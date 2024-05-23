@@ -47,7 +47,7 @@
       
         function sendImage(dataURL) {
           var xhr = new XMLHttpRequest()
-          xhr.open('POST', '{% url "marked" %}', true)
+          xhr.open('POST', '{% url "recognition" %}', true)
           xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
           xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}')
       
