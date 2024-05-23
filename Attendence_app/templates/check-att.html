@@ -1,0 +1,54 @@
+{% extends 'base_user.html' %}
+{% load static %}
+{% block title %}
+  Profile
+{% endblock %}
+
+{% block content %}
+
+<style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 30vh;
+      color:  white;
+    }
+    
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+      
+    }
+
+    </style>
+
+
+<body>
+
+<h2>HTML Table</h2>
+
+<table>
+  <tr>
+    <th>S. No.</th>
+    <th>Couse Name</th>
+    <th>Your Attendance</th>
+    <th>Total Classes</th>
+    <th>Attendance %</th>
+  </tr>
+  {% for i in info %}
+  <tr>
+    <td>{{i.Sno}}</td>
+    <td>{{i.0}}</td>
+    <td>{{i.1}}</td>
+    <td>{{i.2}}</td>
+    <td>{{i.3}}</td>
+  </tr>
+  {% endfor %}
+  
+</table>
+
+</body>
+
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base_user.html' %}
+{% load static %}
+{% block title %}
+  Profile
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .heading{
+        font-size: 10vh;
+        color:white;
+        padding-top: 20vh;
+    }
+
+    .main{
+        color:white;
+    }
+
+    .point{
+
+    }
+
+    .button{
+        background-color: orange;
+        padding: 2vh;
+        border-radius: 5vh;
+        border: solid white;
+    }
+
+</style>
+
+
+<body>
+
+<div class = 'heading'>Ongoing Classes</div>
+
+<ul class = "main">
+    {% for course in sesh %}
+        <li class = "point">{{ course.course.name }}</li>
+        <a href = "/mark-attendence" class = 'button'>Mark Attendence</a>
+    {% empty %}
+        <li class = "point">No courses enrolled.</li>
+    {% endfor %}
+</ul>
+
+</body>
+
+{% endblock %}

@@ -1,0 +1,84 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mark Attendance</title>
+    <script type="text/javscript" src="https://unpkg.com/webcam-easy@1.1.1/dist/webcam-easy.min.js"></script>
+  </head>
+
+  <style>
+    #WebCam, #canvas {
+      display: block;
+      margin: auto;
+      max-width: 100%;
+    }
+    
+  </style>
+
+  <body>
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+
+
+    <script>
+      ;(function () {
+        var video = document.getElementById('video')
+        var canvas = document.getElementById('canvas')
+        var context = canvas.getContext('2d')
+        var interval = 2000
+        var isCapturing = false
+      
+        // Get access to the camera
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
+            video.srcObject = stream
+            video.play()
+            startCapturing()
+          })
+        }
+      
+        function captureImage() {
+          if (!isCapturing) return
+      
+          context.drawImage(video, 0, 0,canvas.width, canvas.height)
+          var dataURL = canvas.toDataURL('image/png')
+          sendImage(dataURL)
+        }
+      
+        function sendImage(dataURL) {
+          var xhr = new XMLHttpRequest()
+          xhr.open('POST', '{% url "marked" %}', true)
+          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+          xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}')
+      
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+              var response = JSON.parse(xhr.responseText)
+              alert(response.status)
+              if (response.should_stop) {
+                stopCapturing()
+                window.location.href = response.redirect_url
+              } else {
+                setTimeout(captureImage, interval)
+              }
+            }
+          }
+      
+          xhr.send('image=' + encodeURIComponent(dataURL))
+        }
+      
+        function startCapturing() {
+          isCapturing = true
+          captureImage()
+        }
+      
+        function stopCapturing() {
+          isCapturing = false
+        }
+      
+        // Automatically start capturing images when the page loads
+        startCapturing()
+      })()
+    </script>
+  </body>
+</html>

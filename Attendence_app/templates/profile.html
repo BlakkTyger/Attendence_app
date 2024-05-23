@@ -1,0 +1,53 @@
+{% extends 'base_user.html' %}
+{% load static %}
+{% block title %}
+  Profile
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .parent-flex{
+        display:flex;
+        margin-top: 20vh;
+        flex-direction: row;
+    }
+
+    .image{
+        
+    }
+
+    .info-parent{
+        color:white;
+    }
+
+    .info-point{
+
+    }
+</style>
+
+<section class = "parent-flex">
+    <div class = "image">
+        <img src="{{request.user.student.profile_pic.url}}">
+    </div>
+    <ul class = "info-parent">
+        <li class = "info-point">Name: {{first_name}} {{last_name}} </li>
+        <li class = "info-point">Roll Number: {{roll_no}} </li>
+        <li class = "info-point">E-mail ID: {{email}} </li>
+        {% for course in courses %}
+        <li class = "info-point">Courses Enrolled in:  {{ course.course.name }}</li>
+        {% empty %}
+            <li>No courses enrolled.</li>
+        {% endfor %}
+        {% for att in attendance %}
+        <li class = "info-point">Courses Enrolled in:  {{ att }}</li>
+        {% empty %}
+            <li>No courses enrolled.</li>
+        {% endfor %}
+
+
+        
+    </ul>
+</section>
+
+{% endblock %}
