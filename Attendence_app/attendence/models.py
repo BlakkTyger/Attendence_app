@@ -66,12 +66,10 @@ class Attendance(models.Model):
         return f'{self.enrollment.student.roll_no} - {self.session.date.strftime("%Y-%m-%d %H:%M:%S")} - {"Present" if self.attended else "Absent"}'
 
 @receiver(post_save, sender=Attendance)
-@receiver(post_delete, sender=ClassSession)
 def update_enrollment_attendance(sender, instance, **kwargs):
     instance.enrollment.update_attendance()
 
 @receiver(post_save, sender=ClassSession)
-@receiver(post_delete, sender=ClassSession)
 def update_total_classes(sender, instance, **kwargs):
     enrollments = Enrollment.objects.filter(course=instance.course)
     for enrollment in enrollments:

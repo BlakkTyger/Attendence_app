@@ -20,26 +20,19 @@ import face_recognition
 from pathlib import Path
 import os
 
-
 from .models import *
 from .decorators import unauth_user, allowed_users
 
 def log_in(request):
-    if request.user.is_authenticated:
-        return redirect('profile')
-    else:
-        if request.method == 'POST':
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-
-            user = authenticate(request, username=username, password = password)
-
-            if user is not None:
-                login(request, user)
-                return redirect('profile')  
-            else:
-                messages.info(request, 'Username or  Password is Incorrect')
-
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password = password)
+        if user is not None:
+            login(request, user)
+            return redirect('profile')  
+        else:
+            messages.info(request, 'Username or  Password is Incorrect')
     return render(request, 'login.html')
 
 # logout page
