@@ -87,8 +87,15 @@ def video(request):
 @allowed_users(allowed_roles=['student'])
 def select_course(request):
     now = timezone.now()
-    ongoing_sessions = ClassSession.objects.filter(date__lte=now, date__gt=now - timezone.timedelta(hours=1))
-    context = {"sesh": ongoing_sessions}
+    ongoing_sessions = ClassSession.objects.filter(date__lte=now, date__gt=now - timezone.timedelta(hours=1), )
+    me = request.user.student
+    my_enrs = Enrollment.objects.filter(student = me)
+    my_crs = []
+    if my_enrs:
+        for i in my_enrs:
+            my_crs.append(i.course.code)
+
+    context = {"sesh": ongoing_sessions, "crs": my_crs}
     return render(request, 'select-course.html', context)
 
 @login_required(login_url='login')
@@ -100,8 +107,11 @@ def check_attendance(request):
     c = []
     cnt = 1
     for x  in enrollments:
-        #percent = (x.course_attendance/x.total_classes)*100
-        c.append({"Sno":cnt,"0":x.course.name, "1":x.course_attendance, "2":x.total_classes, "3":0})
+        if x.total_classes == 0:
+            percent = 0
+        else:
+            percent = (x.course_attendance/x.total_classes)*100
+        c.append({"Sno":cnt,"0":x.course.name, "1":x.course_attendance, "2":x.total_classes, "3":percent})
         cnt+=1
 
     context = {'info': c}
@@ -166,7 +176,7 @@ def recognition(request):
 def marked(request):
     student = request.user.student
     session = request.session.get('course')
-    context = {"sesh":session}
+    context = {"sesh":f'Attendance Marked for Course Session: {session}'}
     course_code = session.split(' - ')[0]
     print(course_code)
     format = "%Y-%m-%d %H:%M:%S"
@@ -176,11 +186,8 @@ def marked(request):
     course = get_object_or_404(Course, code = course_code)
     enroll = get_object_or_404(Enrollment, student = student, course = course)
     sesh = get_object_or_404(ClassSession, course = course, date = datetime_str)
-
-    Attendance.objects.create(enrollment = enroll, session = sesh, attended = True)
-    
-
-
-
-    
-    return render(request, 'marked.html',context)
+    try:
+        Attendance.objects.create(enrollment = enroll, session = sesh, attended = True)
+        return render(request, 'marked.html',context)
+    except:
+        return render(request, 'marked.html',{"sesh":"Attendence Already Marked"})

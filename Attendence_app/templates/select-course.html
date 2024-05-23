@@ -7,16 +7,24 @@
 {% block content %}
   <style>
     .heading {
+      font-family: Raleway;
       font-size: 10vh;
       color: white;
-      padding-top: 20vh;
+      padding-top: 25vh;
+      margin-left: 4vw;
     }
     
     .main {
       color: white;
+      font-family: Raleway;
+      margin-left: 4vw;
+      margin-top: 8vh;
+      margin-bottom: 24vh;
     }
     
     .point {
+      margin-top: 4vh;
+      margin-bottom: 4vh;
     }
     
     .button {
@@ -34,12 +42,14 @@
       {% csrf_token %}
       <ul class="main">
         {% for course in sesh %}
+        {%if course.course.code in crs%}
           <li class="point">
-            {{ course.course.name }}
+            {{ course.course.name }}          
             <button class="button" type="submit" name="course" value="{{ course }}">Mark Attendance</button>
           </li>
+        {%endif%}
         {% empty %}
-          <li class="point">No courses enrolled.</li>
+          <li class="point">No Ongoing Classes to Check Into</li>
         {% endfor %}
       </ul>
     </form>

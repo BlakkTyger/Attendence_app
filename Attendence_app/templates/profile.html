@@ -9,12 +9,32 @@
 <style>
     .parent-flex{
         display:flex;
-        margin-top: 20vh;
+        margin-top: 22vh;
         flex-direction: row;
+        margin-bottom: 2vh;
+        font-family: Raleway;
+        font-size: 1.5vw;
+        align-items: center;
+        align-content: center;
+        justify-content: center;
+        justify-items: center;
+    }
+
+    ul{
+        list-style-type: none;
+        align-items: center;
+        align-content: center;
+        justify-content: center;
+        justify-items: center;
+    }
+
+    .image-cont{
+        margin-left: 2vw;
     }
 
     .image{
-        
+        max-height: 60vh;
+        max-width: 60vw;
     }
 
     .info-parent{
@@ -22,29 +42,51 @@
     }
 
     .info-point{
+        margin-top: 3vh;
+        margin-bottom: 3vh;
+        padding-left: 2vw;
+        padding-right: 2vw;
+        
+    }
+    .info-subpoint{
+        margin-top: 1.5vh;
+        margin-bottom: 1.5vh;
+        padding-left: 4vw;
+        padding-right: 2vw;
+        font-size: 1.5vw !important;
+        
+    }
 
+    @media only screen and (max-width: 900px) {
+        .image{
+            max-width: 90vw;
+        }
+        .parent-flex{
+            margin-top: 22vh;
+            flex-direction: column;
+            font-size: 3vh;
+        }
+        .info-subpoint{
+            font-size: 2.5vh !important;
+            
+        }
     }
 </style>
 
 <section class = "parent-flex">
-    <div class = "image">
-        <img src="{{request.user.student.profile_pic.url}}">
+    <div class = "image-cont">
+        <img class = "image" src="{{request.user.student.profile_pic.url}}">
     </div>
     <ul class = "info-parent">
         <li class = "info-point">Name: {{first_name}} {{last_name}} </li>
         <li class = "info-point">Roll Number: {{roll_no}} </li>
         <li class = "info-point">E-mail ID: {{email}} </li>
+        <li class = "info-point">Courses Enrolled in:</li>
         {% for course in courses %}
-        <li class = "info-point">Courses Enrolled in:  {{ course.course.name }}</li>
+        <li class = "info-subpoint"> {{ course.course.name }}</li>
         {% empty %}
             <li>No courses enrolled.</li>
         {% endfor %}
-        {% for att in attendance %}
-        <li class = "info-point">Courses Enrolled in:  {{ att }}</li>
-        {% empty %}
-            <li>No courses enrolled.</li>
-        {% endfor %}
-
 
         
     </ul>
